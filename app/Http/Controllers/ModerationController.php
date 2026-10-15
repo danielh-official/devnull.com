@@ -35,6 +35,7 @@ final readonly class ModerationController
                 ->withStarsFor($user)
                 ->withPollFor($user)
                 ->afterQuery(fn (Collection $commits) => resolve(CommitTranslations::class)->attach($commits, includePending: true))
+                ->orderByDesc('moderation_score')
                 ->oldest()
                 ->oldest('id')
                 ->cursorPaginate(20)
