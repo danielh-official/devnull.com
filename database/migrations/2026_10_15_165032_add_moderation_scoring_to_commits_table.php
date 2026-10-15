@@ -25,7 +25,9 @@ return new class extends Migration
         Commit::query()
             ->where('status', CommitStatus::Pending)
             ->orderBy('id')
-            ->each(fn (Commit $commit): mixed => resolve(ScoreCommitModeration::class)->handle($commit));
+            ->each(function (Commit $commit): void {
+                resolve(ScoreCommitModeration::class)->handle($commit);
+            });
     }
 
     public function down(): void

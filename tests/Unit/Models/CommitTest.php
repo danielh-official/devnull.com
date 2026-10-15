@@ -30,6 +30,9 @@ test('to array', function (): void {
             'pasteis_count',
             'body_segments',
             'preview_segments',
+            'moderation_score',
+            'moderation_signals',
+            'body_hash',
         ]);
 });
 
