@@ -35,6 +35,7 @@ test('to array', function (): void {
             'moderation_score',
             'moderation_signals',
             'body_hash',
+            'body_segments',
         ]);
 });
 

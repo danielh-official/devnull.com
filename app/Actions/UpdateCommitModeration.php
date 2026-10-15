@@ -10,7 +10,7 @@ use App\Moderation\DeterministicModerationSignals;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-final readonly class ScoreCommitModeration
+final readonly class UpdateCommitModeration
 {
     public function __construct(private DeterministicModerationSignals $deterministic)
     {

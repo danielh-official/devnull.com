@@ -38,6 +38,7 @@ final readonly class CreateCommit
         private TomQuery $tomQuery,
         private FindFirstUrl $findFirstUrl,
         private ScoreCommitModeration $scoreCommitModeration,
+        private UpdateCommitModeration $updateCommitModeration,
     ) {
         //
     }
@@ -84,7 +85,7 @@ final readonly class CreateCommit
             }
 
             if ($commit->status === CommitStatus::Pending) {
-                $this->scoreCommitModeration->handle($commit);
+                $this->updateCommitModeration->handle($commit);
             }
 
             $this->createReplyNotifications->handle($commit);

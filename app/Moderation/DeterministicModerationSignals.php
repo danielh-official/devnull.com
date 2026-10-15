@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Moderation;
 
-use App\Actions\FindFirstUrl;
 use App\Enums\CommitStatus;
 use App\Models\Commit;
+use App\Services\Urls;
 
 final readonly class DeterministicModerationSignals
 {
-    public function __construct(private FindFirstUrl $findFirstUrl)
+    public function __construct(private Urls $urls)
     {
         //
     }
@@ -34,7 +34,7 @@ final readonly class DeterministicModerationSignals
             $signals[] = $this->signal('burst');
         }
 
-        if ($this->findFirstUrl->handle($commit->body) !== null) {
+        if ($this->urls->first($commit->body) !== null) {
             $signals[] = $this->signal('has_url');
         }
 
