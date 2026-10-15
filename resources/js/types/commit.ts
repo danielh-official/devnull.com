@@ -10,6 +10,10 @@ export type Embed = {
     src: string;
     aspect_ratio: string | null;
     height: number | null;
+
+export type ModerationSignal = {
+    code: string;
+    weight: number;
 };
 
 export type LinkPreview = {
@@ -60,6 +64,8 @@ export type Commit = {
     body_segments: BodySegment[];
     preview_segments: BodySegment[] | null;
     status: CommitStatus;
+    moderation_score?: number;
+    moderation_signals?: ModerationSignal[] | null;
     created_at: string;
     updated_at: string;
     deleted_at?: null;
