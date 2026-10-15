@@ -27,7 +27,8 @@ final readonly class ScoreCommitModeration
         $signals = [...$signals, ...$this->aiSignals($commit)];
 
         $score = array_sum(array_column($signals, 'weight'));
-        $cap = (int) config('moderation.score_cap');
+        $cap = config('moderation.score_cap');
+        $cap = is_numeric($cap) ? (int) $cap : 100;
 
         $commit->forceFill([
             'moderation_score' => min($cap, $score),
@@ -53,11 +54,11 @@ final readonly class ScoreCommitModeration
         }
 
         try {
-            return app(AiModerationProvider::class)->signals($commit);
-        } catch (Throwable $exception) {
+            return resolve(AiModerationProvider::class)->signals($commit);
+        } catch (Throwable $throwable) {
             Log::warning('Moderation AI scoring failed; keeping deterministic score.', [
                 'commit_id' => $commit->id,
-                'exception' => $exception->getMessage(),
+                'exception' => $throwable->getMessage(),
             ]);
 
             return [];

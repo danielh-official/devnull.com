@@ -20,29 +20,26 @@ final readonly class DeterministicModerationSignals
      */
     public function handle(Commit $commit): array
     {
-        $weights = config('moderation.weights');
-        assert(is_array($weights));
-
         $signals = [];
 
         if ($this->isDuplicate($commit)) {
-            $signals[] = $this->signal('duplicate', $weights);
+            $signals[] = $this->signal('duplicate');
         }
 
         if ($this->isAuthorFlood($commit)) {
-            $signals[] = $this->signal('author_flood', $weights);
+            $signals[] = $this->signal('author_flood');
         }
 
         if ($this->isBurst($commit)) {
-            $signals[] = $this->signal('burst', $weights);
+            $signals[] = $this->signal('burst');
         }
 
         if ($this->findFirstUrl->handle($commit->body) !== null) {
-            $signals[] = $this->signal('has_url', $weights);
+            $signals[] = $this->signal('has_url');
         }
 
         if ($this->isInviteLike($commit->body)) {
-            $signals[] = $this->signal('invite_like', $weights);
+            $signals[] = $this->signal('invite_like');
         }
 
         return $signals;
@@ -56,14 +53,13 @@ final readonly class DeterministicModerationSignals
     }
 
     /**
-     * @param  array<string, mixed>  $weights
      * @return array{code: string, weight: int}
      */
-    private function signal(string $code, array $weights): array
+    private function signal(string $code): array
     {
         return [
             'code' => $code,
-            'weight' => (int) ($weights[$code] ?? 0),
+            'weight' => $this->integerConfig("moderation.weights.{$code}", 0),
         ];
     }
 
@@ -80,27 +76,23 @@ final readonly class DeterministicModerationSignals
 
     private function isAuthorFlood(Commit $commit): bool
     {
-        $threshold = (int) config('moderation.author_flood_threshold');
+        $threshold = $this->integerConfig('moderation.author_flood_threshold', 3);
 
-        $pendingCount = Commit::query()
+        return Commit::query()
             ->where('user_id', $commit->user_id)
             ->pending()
-            ->count();
-
-        return $pendingCount >= $threshold;
+            ->count() >= $threshold;
     }
 
     private function isBurst(Commit $commit): bool
     {
-        $count = (int) config('moderation.burst.count');
-        $minutes = (int) config('moderation.burst.minutes');
+        $count = $this->integerConfig('moderation.burst.count', 5);
+        $minutes = $this->integerConfig('moderation.burst.minutes', 10);
 
-        $recentCount = Commit::query()
+        return Commit::query()
             ->where('user_id', $commit->user_id)
             ->where('created_at', '>=', now()->subMinutes($minutes))
-            ->count();
-
-        return $recentCount >= $count;
+            ->count() >= $count;
     }
 
     private function isInviteLike(string $body): bool
@@ -109,5 +101,12 @@ final readonly class DeterministicModerationSignals
             '/\b(join\s+(my|our)\s+(discord|telegram|whatsapp)|dm\s+me|send\s+me\s+(a\s+)?dm|click\s+(the\s+)?link|free\s+crypto|whatsapp\.me|t\.me\/)/iu',
             $body,
         ) === 1;
+    }
+
+    private function integerConfig(string $key, int $default): int
+    {
+        $value = config($key);
+
+        return is_numeric($value) ? (int) $value : $default;
     }
 }

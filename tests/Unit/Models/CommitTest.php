@@ -32,6 +32,9 @@ test('to array', function (): void {
             'body_segments',
             'preview_segments',
             'is_checking',
+            'moderation_score',
+            'moderation_signals',
+            'body_hash',
         ]);
 });
 
