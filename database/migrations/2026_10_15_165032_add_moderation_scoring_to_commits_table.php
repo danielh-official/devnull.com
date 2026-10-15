@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\ScoreCommitModeration;
+use App\Actions\UpdateCommitModeration;
 use App\Enums\CommitStatus;
 use App\Models\Commit;
 use Illuminate\Database\Migrations\Migration;
@@ -26,7 +26,7 @@ return new class extends Migration
             ->where('status', CommitStatus::Pending)
             ->orderBy('id')
             ->each(function (Commit $commit): void {
-                resolve(ScoreCommitModeration::class)->handle($commit);
+                resolve(UpdateCommitModeration::class)->handle($commit);
             });
     }
 

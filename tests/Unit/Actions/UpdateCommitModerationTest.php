@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Actions\ScoreCommitModeration;
+use App\Actions\UpdateCommitModeration;
 use App\Contracts\Moderation\AiModerationProvider;
 use App\Models\Commit;
 use Mockery\MockInterface;
@@ -12,7 +12,7 @@ it('persists body hash, score, and signals', function (): void {
         'body' => 'Join my telegram channel now',
     ]);
 
-    resolve(ScoreCommitModeration::class)->handle($commit);
+    resolve(UpdateCommitModeration::class)->handle($commit);
 
     $commit->refresh();
 
@@ -33,7 +33,7 @@ it('caps the score', function (): void {
         'body' => 'Join my discord https://example.com',
     ]);
 
-    resolve(ScoreCommitModeration::class)->handle($commit);
+    resolve(UpdateCommitModeration::class)->handle($commit);
 
     expect($commit->refresh()->moderation_score)->toBe(15);
 });
@@ -49,7 +49,7 @@ it('does not call the AI provider when AI is disabled', function (): void {
         'body' => 'Ordinary commit body',
     ]);
 
-    resolve(ScoreCommitModeration::class)->handle($commit);
+    resolve(UpdateCommitModeration::class)->handle($commit);
 
     expect($commit->refresh()->moderation_score)->toBe(0);
 });
@@ -63,7 +63,7 @@ it('keeps deterministic scoring when AI is enabled without a provider', function
         'body' => 'Click the link https://example.com',
     ]);
 
-    resolve(ScoreCommitModeration::class)->handle($commit);
+    resolve(UpdateCommitModeration::class)->handle($commit);
 
     $codes = array_column($commit->refresh()->moderation_signals ?? [], 'code');
 
@@ -84,7 +84,7 @@ it('merges AI signals when AI is enabled', function (): void {
         'body' => 'Ordinary commit body',
     ]);
 
-    resolve(ScoreCommitModeration::class)->handle($commit);
+    resolve(UpdateCommitModeration::class)->handle($commit);
 
     expect($commit->refresh()->moderation_score)->toBe(20)
         ->and(array_column($commit->moderation_signals, 'code'))->toContain('ai_threat');
@@ -101,7 +101,7 @@ it('keeps deterministic scoring when the AI provider throws', function (): void 
         'body' => 'Click the link https://example.com',
     ]);
 
-    resolve(ScoreCommitModeration::class)->handle($commit);
+    resolve(UpdateCommitModeration::class)->handle($commit);
 
     $codes = array_column($commit->refresh()->moderation_signals ?? [], 'code');
 
