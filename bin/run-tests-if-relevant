@@ -282,7 +282,7 @@ do_stop() {
 
   local output status
   set +e
-  output="$(composer install --no-interaction 2>&1 && bun install 2>&1 && php artisan wayfinder:generate --with-form --no-interaction 2>&1 && composer test 2>&1)"
+  output="$(composer install --no-interaction 2>&1 && bun install 2>&1 && php artisan wayfinder:generate --with-form --no-interaction 2>&1 && bun run build 2>&1 && composer test 2>&1)"
   status=$?
   set -e
 
