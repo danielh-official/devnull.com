@@ -25,6 +25,8 @@ import { SecretWarning } from '@/components/secret-warning';
 import { StashLabel } from '@/components/stash-label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { UserAvatar } from '@/components/user-avatar';
+import { UserPreview } from '@/components/user-preview';
 import { useImageAttachments } from '@/hooks/use-image-attachments';
 import { useLinkCard } from '@/hooks/use-link-card';
 import type { UseLinkCardReturn } from '@/hooks/use-link-card';
@@ -44,6 +46,7 @@ import {
     isRejectedSubmission,
     laneColor,
 } from '@/lib/utils';
+import { show } from '@/routes/user';
 import type { User } from '@/types';
 
 function focusBody(id: string): void {
