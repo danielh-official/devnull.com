@@ -30,8 +30,7 @@ final readonly class CreateCommit
         private TheAlgorithm $theAlgorithm,
         private EmojiShortcodes $emojiShortcodes,
         private Urls $urls,
-        private FindFirstUrl $findFirstUrl,
-        private ScoreCommitModeration $scoreCommitModeration,
+        private UpdateCommitModeration $updateCommitModeration,
     ) {
         //
     }
@@ -76,7 +75,7 @@ final readonly class CreateCommit
             }
 
             if ($commit->status === CommitStatus::Pending) {
-                $this->scoreCommitModeration->handle($commit);
+                $this->updateCommitModeration->handle($commit);
             }
 
             $this->createReplyNotifications->handle($commit);
