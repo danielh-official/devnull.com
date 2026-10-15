@@ -30,6 +30,8 @@ final readonly class CreateCommit
         private TheAlgorithm $theAlgorithm,
         private EmojiShortcodes $emojiShortcodes,
         private Urls $urls,
+        private FindFirstUrl $findFirstUrl,
+        private ScoreCommitModeration $scoreCommitModeration,
     ) {
         //
     }
@@ -71,6 +73,10 @@ final readonly class CreateCommit
 
             if (($parent instanceof Commit || $quotedCommit instanceof Commit) && $commit->status === CommitStatus::Approved) {
                 $this->updateCommitHotScores->handle([$commit->id]);
+            }
+
+            if ($commit->status === CommitStatus::Pending) {
+                $this->scoreCommitModeration->handle($commit);
             }
 
             $this->createReplyNotifications->handle($commit);
