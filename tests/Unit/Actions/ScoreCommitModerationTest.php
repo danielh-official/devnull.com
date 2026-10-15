@@ -54,6 +54,23 @@ it('does not call the AI provider when AI is disabled', function (): void {
     expect($commit->refresh()->moderation_score)->toBe(0);
 });
 
+it('keeps deterministic scoring when AI is enabled without a provider', function (): void {
+    config(['moderation.ai.enabled' => true]);
+
+    expect(app()->bound(AiModerationProvider::class))->toBeFalse();
+
+    $commit = Commit::factory()->pending()->create([
+        'body' => 'Click the link https://example.com',
+    ]);
+
+    resolve(ScoreCommitModeration::class)->handle($commit);
+
+    $codes = array_column($commit->refresh()->moderation_signals ?? [], 'code');
+
+    expect($codes)->toContain('has_url')
+        ->and($codes)->toContain('invite_like');
+});
+
 it('merges AI signals when AI is enabled', function (): void {
     config(['moderation.ai.enabled' => true]);
 
