@@ -31,6 +31,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read string $body
  * @property-read array<string, string>|null $mentions
  * @property-read CommitStatus $status
+ * @property-read int $moderation_score
+ * @property-read list<array{code: string, weight: int}>|null $moderation_signals
+ * @property-read string|null $body_hash
  * @property-read string|null $link_preview_id
  * @property-read string|null $quoted_commit_id
  * @property-read CommitStatus|null $ai_decision
@@ -115,6 +118,9 @@ final class Commit extends Model
             'body' => 'string',
             'mentions' => 'array',
             'status' => CommitStatus::class,
+            'moderation_score' => 'integer',
+            'moderation_signals' => 'array',
+            'body_hash' => 'string',
             'link_preview_id' => 'string',
             'quoted_commit_id' => 'string',
             'ai_decision' => CommitStatus::class,
