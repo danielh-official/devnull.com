@@ -42,6 +42,8 @@ it('creates commits pending review', function (): void {
 });
 
 it('scores pending commits for moderation triage', function (): void {
+    Queue::fake();
+
     $action = resolve(CreateCommit::class);
 
     $commit = $action->handle(User::factory()->create(), 'Join my discord https://example.com');
