@@ -24,16 +24,15 @@ test('to array', function (): void {
             'parent_id',
             'deleted_at',
             'link_preview_id',
+            'moderation_score',
+            'moderation_signals',
+            'body_hash',
             'quoted_commit_id',
             'root_id',
             'hot_score',
             'pasteis_count',
             'body_segments',
             'preview_segments',
-            'moderation_score',
-            'moderation_signals',
-            'body_hash',
-            'body_segments',
         ]);
 });
 
