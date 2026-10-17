@@ -44,7 +44,6 @@ import {
     isRejectedSubmission,
     laneColor,
 } from '@/lib/utils';
-import { show } from '@/routes/user';
 import type { User } from '@/types';
 
 function focusBody(id: string): void {
