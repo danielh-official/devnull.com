@@ -40,13 +40,4 @@ return new class extends Migration
                 resolve(UpdateCommitModeration::class)->handle($commit);
             });
     }
-
-    public function down(): void
-    {
-        Schema::table('commits', function (Blueprint $table): void {
-            $table->dropIndex(['status', 'moderation_score', 'created_at']);
-            $table->dropIndex(['body_hash']);
-            $table->dropColumn(['moderation_score', 'moderation_signals', 'body_hash']);
-        });
-    }
 };
