@@ -103,6 +103,24 @@ it('measures bursts from when the commit was posted', function (): void {
         ->and(array_column($signals->handle($recent), 'code'))->not->toContain('burst');
 });
 
+it('does not count commits posted after it in the same second as a burst', function (): void {
+    config([
+        'moderation.burst.count' => 3,
+        'moderation.burst.minutes' => 10,
+    ]);
+
+    $user = User::factory()->create();
+    $commits = Commit::factory()->for($user)->count(3)->create([
+        'status' => CommitStatus::Pending,
+        'created_at' => now()->subMinute(),
+    ]);
+
+    $signals = resolve(DeterministicModerationSignals::class);
+
+    expect(array_column($signals->handle($commits->first()), 'code'))->not->toContain('burst')
+        ->and(array_column($signals->handle($commits->last()), 'code'))->toContain('burst');
+});
+
 it('flags urls', function (): void {
     $commit = Commit::factory()->pending()->create([
         'body' => 'Check https://example.com/path',
