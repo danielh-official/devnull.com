@@ -64,6 +64,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'ai_decision',
     'ai_categories',
     'embedding',
+    'moderation_score',
+    'moderation_signals',
+    'body_hash',
 ])]
 #[UseEloquentBuilder(CommitBuilder::class)]
 final class Commit extends Model
