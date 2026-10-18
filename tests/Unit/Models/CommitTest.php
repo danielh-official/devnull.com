@@ -24,9 +24,6 @@ test('to array', function (): void {
             'parent_id',
             'deleted_at',
             'link_preview_id',
-            'moderation_score',
-            'moderation_signals',
-            'body_hash',
             'quoted_commit_id',
             'mentions',
             'root_id',
@@ -39,7 +36,9 @@ test('to array', function (): void {
             'moderation_score',
             'moderation_signals',
             'body_hash',
-
+            'body_segments',
+            'preview_segments',
+            'is_checking',
         ]);
 });
 
