@@ -82,6 +82,27 @@ it('flags burst posting', function (): void {
     expect($codes)->toContain('burst');
 });
 
+it('measures bursts from when the commit was posted', function (): void {
+    config([
+        'moderation.burst.count' => 3,
+        'moderation.burst.minutes' => 10,
+    ]);
+
+    $user = User::factory()->create();
+    Commit::factory()->for($user)->count(3)->create([
+        'status' => CommitStatus::Pending,
+        'created_at' => now()->subDay(),
+    ]);
+
+    $old = Commit::query()->where('user_id', $user->id)->latest('id')->firstOrFail();
+    $recent = Commit::factory()->for($user)->pending()->create(['created_at' => now()]);
+
+    $signals = resolve(DeterministicModerationSignals::class);
+
+    expect(array_column($signals->handle($old), 'code'))->toContain('burst')
+        ->and(array_column($signals->handle($recent), 'code'))->not->toContain('burst');
+});
+
 it('flags urls', function (): void {
     $commit = Commit::factory()->pending()->create([
         'body' => 'Check https://example.com/path',
