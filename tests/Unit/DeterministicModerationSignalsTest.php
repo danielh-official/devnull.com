@@ -109,3 +109,12 @@ it('returns no signals for ordinary text', function (): void {
 
     expect(resolve(DeterministicModerationSignals::class)->handle($commit))->toBe([]);
 });
+
+it('does not flag image-only commits as duplicates of each other', function (): void {
+    $signals = resolve(DeterministicModerationSignals::class);
+
+    Commit::factory()->pending()->create(['body' => '', 'body_hash' => $signals->bodyHash('')]);
+    $commit = Commit::factory()->pending()->create(['body' => '', 'body_hash' => $signals->bodyHash('')]);
+
+    expect(array_column($signals->handle($commit), 'code'))->not->toContain('duplicate');
+});

@@ -65,6 +65,11 @@ final readonly class DeterministicModerationSignals
 
     private function isDuplicate(Commit $commit): bool
     {
+        // Image-only commits share the empty body's hash, so there is no text to compare.
+        if (mb_trim($commit->body) === '') {
+            return false;
+        }
+
         $hash = $commit->body_hash ?? $this->bodyHash($commit->body);
 
         return Commit::query()
