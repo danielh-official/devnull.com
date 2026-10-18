@@ -6,6 +6,7 @@ namespace App\Moderation;
 
 use App\Enums\CommitStatus;
 use App\Models\Commit;
+use App\Queries\CommitBuilder;
 use App\Services\Urls;
 
 final readonly class DeterministicModerationSignals
@@ -94,10 +95,12 @@ final readonly class DeterministicModerationSignals
         $count = $this->integerConfig('moderation.burst.count', 5);
         $minutes = $this->integerConfig('moderation.burst.minutes', 10);
 
-        // The window ends when the commit was posted, so a backfill scores the burst as it was at submission.
+        // The window ends when the commit was posted, so a backfill scores the burst as it was at submission. Commits
+        // posted after this one in the same second are left out, just as they were not there yet.
         return Commit::query()
             ->where('user_id', $commit->user_id)
-            ->whereBetween('created_at', [$commit->created_at->copy()->subMinutes($minutes), $commit->created_at])
+            ->where('created_at', '>=', $commit->created_at->copy()->subMinutes($minutes))
+            ->whereNot(fn (CommitBuilder $query): CommitBuilder => $query->newerThan($commit))
             ->count() >= $count;
     }
 
