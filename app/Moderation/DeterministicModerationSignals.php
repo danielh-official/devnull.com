@@ -94,9 +94,10 @@ final readonly class DeterministicModerationSignals
         $count = $this->integerConfig('moderation.burst.count', 5);
         $minutes = $this->integerConfig('moderation.burst.minutes', 10);
 
+        // The window ends when the commit was posted, so a backfill scores the burst as it was at submission.
         return Commit::query()
             ->where('user_id', $commit->user_id)
-            ->where('created_at', '>=', now()->subMinutes($minutes))
+            ->whereBetween('created_at', [$commit->created_at->copy()->subMinutes($minutes), $commit->created_at])
             ->count() >= $count;
     }
 
