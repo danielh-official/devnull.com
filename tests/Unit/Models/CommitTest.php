@@ -29,9 +29,6 @@ test('to array', function (): void {
             'root_id',
             'hot_score',
             'pasteis_count',
-            'moderation_score',
-            'moderation_signals',
-            'body_hash',
             'body_segments',
             'preview_segments',
             'is_checking',
@@ -453,4 +450,10 @@ it('never shows the images of a deleted commit in its tombstone', function (): v
     $tombstone = Commit::withTrashed()->with('images')->findOrFail($commit->id);
 
     expect($tombstone->toArray())->not->toHaveKey('images');
+});
+
+it('hides its moderation metadata by default', function (): void {
+    $commit = Commit::factory()->create(['moderation_score' => 50, 'moderation_signals' => [['code' => 'duplicate', 'weight' => 50]], 'body_hash' => 'hash']);
+
+    expect($commit->toArray())->not->toHaveKeys(['moderation_score', 'moderation_signals', 'body_hash']);
 });

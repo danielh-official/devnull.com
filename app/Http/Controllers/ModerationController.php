@@ -39,7 +39,7 @@ final readonly class ModerationController
                 ->oldest()
                 ->oldest('id')
                 ->cursorPaginate(20)
-                ->through($this->withAiDecision(...))),
+                ->through($this->withModeration(...))),
         ]);
     }
 
@@ -57,10 +57,10 @@ final readonly class ModerationController
     }
 
     /**
-     * The AI's decision is hidden everywhere else, but moderators see it.
+     * The AI's decision and the risk score are hidden everywhere else, but moderators see them.
      */
-    private function withAiDecision(Commit $commit): Commit
+    private function withModeration(Commit $commit): Commit
     {
-        return $commit->makeVisible(['ai_decision', 'ai_categories']);
+        return $commit->makeVisible(['ai_decision', 'ai_categories', 'moderation_score', 'moderation_signals']);
     }
 }
