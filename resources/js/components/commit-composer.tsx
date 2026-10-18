@@ -38,7 +38,6 @@ import {
 } from '@/components/schedule-picker';
 import { StashLabel } from '@/components/stash-label';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { UserPreview } from '@/components/user-preview';
 import { useImageAttachments } from '@/hooks/use-image-attachments';
 import { useLinkCard } from '@/hooks/use-link-card';
