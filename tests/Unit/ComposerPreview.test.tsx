@@ -149,7 +149,7 @@ function renderComposer(body: string, isInDialog = false): string {
                                 user: {
                                     id: 'preview-user',
                                     name: 'Preview User',
-                                    username: 'previewuser',
+                                    username: 'preview-user',
                                     lane: 0,
                                 },
                                 log: {},
