@@ -192,7 +192,7 @@ function CommitComposerBody({
                 hasTail={!isInDialog}
                 node={
                     isInDialog ? (
-                        <RailAvatar user={user} isStaged={!isFilled} />
+                        <RailAvatar user={user} progress={progress} />
                     ) : (
                         <UserPreview user={user} className="flex">
                             <Link
@@ -201,7 +201,7 @@ function CommitComposerBody({
                                 aria-label="View your profile"
                                 className="flex rounded-full"
                             >
-                                <RailAvatar user={user} isStaged={!isFilled} />
+                                <RailAvatar user={user} progress={progress} />
                             </Link>
                         </UserPreview>
                     )
