@@ -36,8 +36,6 @@ final readonly class CreateCommit
         private Urls $urls,
         private MentionedUsersQuery $mentionedUsers,
         private TomQuery $tomQuery,
-        private FindFirstUrl $findFirstUrl,
-        private ScoreCommitModeration $scoreCommitModeration,
         private UpdateCommitModeration $updateCommitModeration,
     ) {
         //
