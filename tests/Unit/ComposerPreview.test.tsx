@@ -274,7 +274,7 @@ test('ordinary drafts retain preview without a sensitive text warning', () => {
     assert.ok(!markup.includes('aria-label="Sensitive text warning"'));
 });
 
-void test('links the composer avatar to the author profile', () => {
+test('links the composer avatar to the author profile', () => {
     const markup = renderComposer('Shipped a small fix');
     const avatar = markup.match(
         /<span[^>]*><a[^>]*href="\/@preview-user"[^>]*>/,
