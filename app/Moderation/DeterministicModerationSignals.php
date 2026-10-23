@@ -73,10 +73,16 @@ final readonly class DeterministicModerationSignals
 
         $hash = $commit->body_hash ?? $this->bodyHash($commit->body);
 
+        // Short replies like "thanks!" match across users all the time, so another user's text only counts once a
+        // moderator has rejected it.
         return Commit::query()
             ->where('body_hash', $hash)
             ->whereKeyNot($commit->id)
-            ->whereIn('status', [CommitStatus::Pending, CommitStatus::Rejected])
+            ->where(fn (CommitBuilder $query): CommitBuilder => $query
+                ->where('status', CommitStatus::Rejected)
+                ->orWhere(fn (CommitBuilder $query): CommitBuilder => $query
+                    ->where('user_id', $commit->user_id)
+                    ->pending()))
             ->exists();
     }
 

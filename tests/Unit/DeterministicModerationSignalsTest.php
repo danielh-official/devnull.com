@@ -14,15 +14,27 @@ it('hashes bodies after normalizing case and whitespace', function (): void {
         ->toBe($signals->bodyHash('hello world'));
 });
 
-it('flags duplicate pending bodies', function (): void {
-    $hash = resolve(DeterministicModerationSignals::class)->bodyHash('same message');
+it('does not flag the same text pending from another user', function (): void {
+    $hash = resolve(DeterministicModerationSignals::class)->bodyHash('thanks!');
 
-    Commit::factory()->pending()->create([
+    Commit::factory()->pending()->create(['body' => 'Thanks!', 'body_hash' => $hash]);
+    $commit = Commit::factory()->pending()->create(['body' => 'thanks!', 'body_hash' => $hash]);
+
+    $codes = array_column(resolve(DeterministicModerationSignals::class)->handle($commit), 'code');
+
+    expect($codes)->not->toContain('duplicate');
+});
+
+it('flags duplicates of the same author pending bodies', function (): void {
+    $hash = resolve(DeterministicModerationSignals::class)->bodyHash('same message');
+    $user = User::factory()->create();
+
+    Commit::factory()->pending()->for($user)->create([
         'body' => 'same message',
         'body_hash' => $hash,
     ]);
 
-    $commit = Commit::factory()->pending()->create([
+    $commit = Commit::factory()->pending()->for($user)->create([
         'body' => 'Same   Message',
         'body_hash' => $hash,
     ]);
