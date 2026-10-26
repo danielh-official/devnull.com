@@ -197,7 +197,6 @@ function CommitComposerBody({
                         <UserPreview user={user} className="flex">
                             <Link
                                 href={show(user)}
-                                tabIndex={-1}
                                 aria-label="View your profile"
                                 className="flex rounded-full"
                             >
