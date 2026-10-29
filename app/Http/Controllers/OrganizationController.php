@@ -38,6 +38,7 @@ final readonly class OrganizationController
             // The Mentions tab tells a restored commit belongs to it by the ID, whatever handle the commit mentions.
             'organization' => $organization->makeVisible('id'),
             'lane' => $organization->lane(),
+            'isFollowing' => $currentUser?->isFollowingOrganization($organization) ?? false,
             'tab' => $request->tab(...),
             'commits' => Inertia::scroll(fn () => $mentions->builder($organization, $currentUser)
                 ->cursorPaginate(20)

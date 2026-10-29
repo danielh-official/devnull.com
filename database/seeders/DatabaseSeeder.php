@@ -64,6 +64,8 @@ final class DatabaseSeeder extends Seeder
         $this->seedNotifications($localDeveloper, $users);
 
         $this->converse($localDeveloper, $users);
+
+        $this->call(OrganizationSeeder::class);
     }
 
     /**

@@ -80,6 +80,7 @@ use App\Http\Controllers\OperationsEventController;
 use App\Http\Controllers\OrganizationAdminController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrganizationLaneController;
+use App\Http\Controllers\OrganizationFollowController;
 use App\Http\Controllers\OrganizationMentionController;
 use App\Http\Controllers\OrganizationSitemapController;
 use App\Http\Controllers\OrgArchiveController;
@@ -619,6 +620,16 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('@{user:handle}/follow', [UserFollowController::class, 'destroy'])
         ->middleware('throttle:follows')
         ->name('user-follow.destroy');
+
+    // Organization Follow...
+    Route::post('organizations/{organization}/follow', [OrganizationFollowController::class, 'store'])
+        ->middleware('throttle:follows')
+        ->whereUuid('organization')
+        ->name('organization-follow.store');
+    Route::delete('organizations/{organization}/follow', [OrganizationFollowController::class, 'destroy'])
+        ->middleware('throttle:follows')
+        ->whereUuid('organization')
+        ->name('organization-follow.destroy');
 
     // User Mute...
     Route::post('@{user:handle}/mute', [UserMuteController::class, 'store'])

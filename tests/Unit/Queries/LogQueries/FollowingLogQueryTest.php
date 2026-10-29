@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Actions\CreateCommitTopics;
 use App\Models\Commit;
+use App\Models\Profile;
 use App\Models\User;
 use App\Queries\LogQueries\FollowingLogQuery;
 use Illuminate\Support\Facades\DB;
@@ -101,4 +103,21 @@ it('leaves out commits by followed people the user muted', function (): void {
     $commits = resolve(FollowingLogQuery::class)->builder($user)->get();
 
     expect($commits->modelKeys())->toBe([$visible->id]);
+});
+
+it('includes commits that mention followed organizations', function (): void {
+    $user = User::factory()->create();
+    $laravel = Profile::factory()->organization()->create(['handle' => 'laravel']);
+    $symfony = Profile::factory()->organization()->create(['handle' => 'symfony']);
+
+    $user->followedOrganizations()->attach($laravel);
+
+    $mentioning = Commit::factory()->create();
+    resolve(CreateCommitTopics::class)->handle($mentioning, ['laravel' => $laravel->id]);
+    $other = Commit::factory()->create();
+    resolve(CreateCommitTopics::class)->handle($other, ['symfony' => $symfony->id]);
+
+    $commits = resolve(FollowingLogQuery::class)->builder($user)->get();
+
+    expect($commits->modelKeys())->toBe([$mentioning->id]);
 });

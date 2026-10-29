@@ -5,6 +5,7 @@ import { UserCheck, UserPlus } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import OrganizationFollowController from '@/actions/App/Http/Controllers/OrganizationFollowController';
 import UserFollowController from '@/actions/App/Http/Controllers/UserFollowController';
 import { Button } from '@/components/ui/button';
 import {
@@ -325,5 +326,70 @@ export function FollowIconButton({
                       : `Follow @${user.handle}`}
             </TooltipContent>
         </Tooltip>
+    );
+}
+
+/**
+ * Following an organization brings the commits that mention it into the Following log.
+ */
+export function OrganizationFollowButton({
+    organization,
+    isFollowing: initialIsFollowing,
+    className,
+}: {
+    organization: { id: string; handle: string };
+    isFollowing: boolean;
+    className?: string;
+}) {
+    const {
+        props: { auth },
+    } = usePage();
+    const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
+    const { isJustToggled, markToggled, onMouseLeave } = useFollowHover();
+
+    if (auth.user === null) {
+        return (
+            <Button
+                className={className}
+                onClick={signIn}
+                aria-label={`Follow @${organization.handle}`}
+                data-test="organization-follow-button"
+            >
+                Follow
+            </Button>
+        );
+    }
+
+    return (
+        <Button
+            variant={isFollowing ? 'outline' : 'default'}
+            className={cn('group/follow', className)}
+            asChild
+        >
+            <Link
+                href={
+                    isFollowing
+                        ? OrganizationFollowController.destroy(organization)
+                        : OrganizationFollowController.store(organization)
+                }
+                as="button"
+                only={['auth']}
+                preserveScroll
+                onHttpException={(response) => !toastWhenThrottled(response)}
+                aria-label={`${isFollowing ? 'Unfollow' : 'Follow'} @${organization.handle}`}
+                data-test="organization-follow-button"
+                onClick={markToggled}
+                onSuccess={() => {
+                    setIsFollowing(!isFollowing);
+                    router.flushAll();
+                }}
+                onMouseLeave={onMouseLeave}
+            >
+                <FollowLabel
+                    isFollowing={isFollowing}
+                    isJustToggled={isJustToggled}
+                />
+            </Link>
+        </Button>
     );
 }

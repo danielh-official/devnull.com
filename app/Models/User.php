@@ -74,6 +74,7 @@ use LogicException;
  * @property-read Collection<int, Commit> $starredCommits
  * @property-read Collection<int, User> $following
  * @property-read Collection<int, User> $followers
+ * @property-read Collection<int, Profile> $followedOrganizations
  * @property-read Collection<int, User> $muting
  * @property-read Collection<int, User> $mutedBy
  * @property-read Collection<int, User> $blocking
@@ -365,6 +366,14 @@ final class User extends Authenticatable
     }
 
     /**
+     * @return BelongsToMany<Profile, $this>
+     */
+    public function followedOrganizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Profile::class, 'organization_follows', 'user_id', 'organization_id')->withTimestamps();
+    }
+
+    /**
      * @return BelongsToMany<User, $this>
      */
     public function followers(): BelongsToMany
@@ -507,6 +516,11 @@ final class User extends Authenticatable
     public function isFollowing(self $user): bool
     {
         return $this->following()->newPivotQuery()->where('followed_id', $user->id)->exists();
+    }
+
+    public function isFollowingOrganization(Profile $organization): bool
+    {
+        return $this->followedOrganizations()->newPivotQuery()->where('organization_id', $organization->id)->exists();
     }
 
     public function isMuting(self $user): bool

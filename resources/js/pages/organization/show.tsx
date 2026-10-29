@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { show } from '@/actions/App/Http/Controllers/UserController';
 import { BioText } from '@/components/bio-text';
 import { CommitFeed, EmptyFeed } from '@/components/commit-feed';
+import { OrganizationFollowButton } from '@/components/follow-button';
 import { GitHubIcon } from '@/components/github-icon';
 import { OrganizationAvatar } from '@/components/organization-avatar';
 import { OrganizationLaneDialog } from '@/components/organization-lane-dialog';
@@ -26,6 +27,7 @@ import type {
 export default function Show({
     organization,
     lane,
+    isFollowing,
     tab,
     commits,
     claimUrl,
@@ -33,6 +35,7 @@ export default function Show({
 }: {
     organization: Organization & { id: string };
     lane: Lane | null;
+    isFollowing: boolean;
     tab: 'mentions';
     commits: CursorPaginated<Commit>;
     claimUrl: string;
@@ -104,6 +107,11 @@ export default function Show({
                         <ProfileShareButton
                             handle={organization.handle}
                             href={show(organization).url}
+                        />
+                        <OrganizationFollowButton
+                            organization={organization}
+                            isFollowing={isFollowing}
+                            className="min-w-28"
                         />
                     </div>
                 </div>

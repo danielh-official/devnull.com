@@ -118,9 +118,9 @@ A member of an organization can **Claim** its page, which lists them as its admi
 
 Every organization has a color, /dev/null's blue until its admin chooses another with **Color** on its page: one of the same six lane colors as developers, or a custom one. It rings the organization's avatar, leads its handle, and colors its link preview.
 
-Following organizations is planned, not shipped yet.
+Signed-in users can **Follow** an organization from its page. Following puts the commits that mention it in your Following log, with the usual visibility, mutes and blocks. Replies that mention it stay on its Mentions tab, since logs list top-level commits only. Organizations have no follower counts and following one sends no notification.
 
-Sources: [organization page](resources/js/pages/organization/show.tsx), [mentions](app/Queries/OrganizationMentionsQuery.php), [organization lookups](app/Actions/UpdateCommitTopics.php), [claims](app/Http/Controllers/OrganizationAdminController.php), [color](resources/js/components/organization-lane-dialog.tsx).
+Sources: [organization page](resources/js/pages/organization/show.tsx), [mentions](app/Queries/OrganizationMentionsQuery.php), [organization lookups](app/Actions/UpdateCommitTopics.php), [claims](app/Http/Controllers/OrganizationAdminController.php), [color](resources/js/components/organization-lane-dialog.tsx), [follows](app/Http/Controllers/OrganizationFollowController.php).
 
 ### Going live
 

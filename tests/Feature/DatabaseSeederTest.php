@@ -3,11 +3,15 @@
 declare(strict_types=1);
 
 use App\Enums\InboxTab;
+use App\Enums\ProfileType;
+use App\Models\Commit;
 use App\Models\Notification;
+use App\Models\Profile;
 use App\Models\User;
 use App\Queries\ConversationsQuery;
 use App\Queries\NotificationGroupsQuery;
 use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\OrganizationSeeder;
 
 it('gives the local developer people to follow and followers', function (): void {
     $this->seed(DatabaseSeeder::class);
@@ -58,3 +62,13 @@ it('gives the local developer conversations to read and reply to', function (boo
     'requests off' => [false, 0, 2],
     'requests on' => [true, 1, 3],
 ]);
+
+it('seeds the laravel organization with commits that mention it', function (): void {
+    $this->seed(OrganizationSeeder::class);
+    $this->seed(OrganizationSeeder::class);
+
+    $laravel = Profile::query()->where('handle', 'laravel')->sole();
+
+    expect($laravel->type)->toBe(ProfileType::Organization)
+        ->and(Commit::query()->mentioning($laravel)->count())->toBe(10);
+});
